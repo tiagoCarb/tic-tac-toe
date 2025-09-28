@@ -1,95 +1,76 @@
 require_relative "board"
 
-class Game 
+class Game
   attr_accessor :round
+  WINNINGS = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    [1, 4, 7],
+    [2, 5, 8],
+    [3, 6, 9],
+    [1, 5, 9],
+    [3, 5, 7]
+  ]
 
-  def initialize (playerX, playerO)
-    @playerX = playerX
-    @playerO = playerO
-    Board.cleanGrid
-  end
-  
-   
-
-  def checkHorizontal
-    if Board.checkSimbols(1) == Board.checkSimbols(2) &&  
-       Board.checkSimbols(2) == Board.checkSimbols(3) && Board.checkSimbols(1) != " "
-        return true 
-    elsif Board.checkSimbols(4) == Board.checkSimbols(5) &&  
-          Board.checkSimbols(5) == Board.checkSimbols(6) && Board.checkSimbols(4) != " "
-          return true 
-    elsif Board.checkSimbols(7) == Board.checkSimbols(8) &&  
-          Board.checkSimbols(8) == Board.checkSimbols(9) && Board.checkSimbols(7) != " "
+  def winner?
+    WINNINGS.each do |win|
+      pos1, pos2, pos3 = win
+      if Board.check_simbols(pos1) == Board.check_simbols(pos2) &&
+         Board.check_simbols(pos2) == Board.check_simbols(pos3) &&
+         Board.check_simbols(pos1) != " "
           return true
+      end
     end
-          return false
+    return false
   end
 
-  def checkVertical
-    if Board.checkSimbols(1) == Board.checkSimbols(4) &&  
-       Board.checkSimbols(4) == Board.checkSimbols(7) && Board.checkSimbols(1) != " "
-        return true 
-    elsif Board.checkSimbols(2) == Board.checkSimbols(5) &&  
-          Board.checkSimbols(5) == Board.checkSimbols(8) && Board.checkSimbols(2) != " "
-          return true 
-    elsif Board.checkSimbols(3) == Board.checkSimbols(6) &&  
-          Board.checkSimbols(6) == Board.checkSimbols(9) && Board.checkSimbols(3) != " "
-          return true
-    end
-          return false
+  def initialize(player_x, player_o)
+    @player_x = player_x
+    @player_o = player_o
+    Board.clean_grid
   end
 
-  def checkDiagonal
-    if Board.checkSimbols(1) == Board.checkSimbols(5) &&  
-       Board.checkSimbols(5) == Board.checkSimbols(9) && Board.checkSimbols(1) != " "
-        return true 
-    elsif Board.checkSimbols(3) == Board.checkSimbols(5) &&  
-          Board.checkSimbols(5) == Board.checkSimbols(7) && Board.checkSimbols(3) != " "
-          return true 
-    end
-          return false
-  end
 
-  def checkPosition
+  def check_position
     i = 0
-    while i == 0
+    while i.zero?
       position = gets.chomp.to_i
       if position < 1 || position > 9
         puts "Please enter a valid position"
-      elsif Board.checkSimbols(position) != " "
+      elsif Board.check_simbols(position) != " "
         puts "The position has already been used, please enter a valid position"
-      else 
+      else
         i += 1
       end
-    end 
-    return position
+    end
+    position
   end
-  
-  def newGame
+
+  def new_game
     round = 0
-    while round < 9 do 
-      if round.even? 
-       puts "#{@playerX} enter a position"
-       Board.newSimbols(checkPosition,"X")
-      else 
-        puts "#{@playerO} enter a position"
-       Board.newSimbols(checkPosition,"O")
+    while round < 9
+      if round.even?
+        puts "#{@player_x} enter a position"
+        Board.new_simbols(check_position, "X")
+      else
+        puts "#{@player_o} enter a position"
+        Board.new_simbols(check_position, "O")
       end
       round += 1
       puts Board.board
-      if checkHorizontal || checkDiagonal || checkVertical
+      if winner?
         if round.even?
-          puts "#{@playerO} wins!"
-          break
-        else 
-          puts "#{@playerX} wins!"
-          break
+          puts "#{@player_o} wins!"
+        else
+          puts "#{@player_x} wins!"
         end
+        break
       elsif round == 9
         puts "It's a Draw!"
         break
       end
-    
+
     end
-  end  
+  end
 end
